@@ -1,0 +1,77 @@
+/* character definitions */
+AlphaNumeric ::= (#0..#33) | (#35..#46) | (#48..#255) | ("/" (#0..#255)) ;
+Character    ::= ("A".."Z") ;
+Number       ::= ("0".."9") ;
+
+/* string definitions */
+Identifier ::= (Character | Number)+ ;
+Integer    ::= (Number)+ ;
+Numericial ::= Integer ("." Integer)? ;
+String     ::= (AlphaNumeric)* ;
+Value      ::= Numerical | (""" String """) ;
+
+/* word definitions */
+WordAs     ::= "AS" ;
+WordAssign ::= "ASSIGN" ;
+WordIn     ::= "IN" ;
+WordWith   ::= "WITH" ;
+WordWhere  ::= "WHERE" ;
+
+/* sign definitions */
+AllSign       ::= ("*" ("*")?)? ;
+AssignSign    ::= ":" ;
+CheckCaseSign ::= "#" ;
+DefineSign    ::= ":" ;
+EquationSign  ::= (2=" | "~" | "<" | "<=" | ">" | ">=") ;
+LevelSign     ::= "." ;
+NotSign       ::= "!" ;
+PrimarySign   ::= "$" ;
+
+/* bracket definitions */
+AssignClose ::= "]" ;
+AssignOpen  ::= "[" ;
+DefineClose ::= "}" ;
+DefineOpen  ::= "{" ;
+EquateClose ::= ")" ;
+EquateOpen  ::= "(" ;
+SizeClose   ::= ")" ;
+SizeOpen    ::= "(" ;
+
+/* seperator definitions */
+AssignSeperate     ::= ";" ;
+DefineSeperate     ::= ";" ;
+DefinitionSeperate ::= "," ;
+EquateSeperate     ::= "&" ;
+EquationSeperate   ::= "|" ;
+
+/* list definitions */
+Assign      ::= Identifier AssignSign Value ;
+AssignList  ::= AssignOpen (Assign (AssignSeperate Assign)*)? AssignClose ;
+Assign_List ::= (WordAssign AssignList)? ;
+
+Define         ::= (PrimarySign)? Identifier DefineSign Identifier (SizeOpen Integer SizeClose)? ;
+DefineList     ::= DefineOpen (Define (DefineSeperate Define)*)? DefineClose ;
+Definition     ::= Identifier WordAs DefineList ;
+DefinitionList ::= (Definition (DefinitionSeperate Definition)*)? ;
+With_List      ::= (WordWith DefinitionList)? ;
+
+Equate        ::= (NotSign)? (Identifier LevelSign)? Identifier (CheckCaseSign)? EquationSign Value ;
+EquateList    ::= EquateOpen (Equate (EquateSeperate Equate)*)? EquateClose ;
+Equation      ::= (EquateList (EquationSeperate EquateList)*)? ;
+In_List       ::= (WordIn Equation)? ;
+Where_List    ::= (WordWhere Equation)? ;
+
+/* action definitions */
+ActionA ::= ("GET" | "SET" | "INSERT" | "REMOVE" | "REFERENCE") ;
+ActionB ::= "CREATE" ;
+ActionC ::= "OPEN" ;
+ActionD ::= ("CLOSE" | "SAVE" | "OPTIMIZE") ;
+
+/* command definitions */
+CommandA ::= ActionA Identifier Assign_List AllSign Where_List AllSign In_List ;
+CommandB ::= ActionB Identifier With_List ;
+CommandC ::= ActionC Identifier ;
+CommandD ::= ActionD ;
+
+/* COMMAND definition */
+Command ::= (CommandA | CommandB | CommandC | CommandD) ;
